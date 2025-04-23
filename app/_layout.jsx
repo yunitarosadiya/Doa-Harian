@@ -1,27 +1,25 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useCallback, useState } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, stylesheet } from 'react-native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
-// Tahan splash screen dulu
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require('../assets/fonts/SpaceMomo-Regular.ttf'),
   });
 
-  const [showSplashText, setShowSplashText] = useState(true);
+  const [showSplashText, setShowSplashText] = usestate(true);
 
   useEffect(() => {
     if (loaded) {
-      // Tambahkan delay manual sebelum hide splash
       setTimeout(async () => {
         await SplashScreen.hideAsync();
         setShowSplashText(false);
@@ -29,7 +27,6 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  // Kalau belum siap, tampilkan null
   if (!loaded || showSplashText) {
     return (
       <View style={styles.splash}>
@@ -41,24 +38,24 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+        <stack.screen name="(tabs)" options={{ headerShown: false }} />
+        <stack.screen name="(index)" options={{ headerShown: false}} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = stylesheet.create({
   splash: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff',
+    backgroundcolor: '#ffffff'
   },
   splashText: {
     fontSize: 26,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#333'
   },
 });
