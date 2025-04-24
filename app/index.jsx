@@ -11,19 +11,19 @@ const SplashScreen = () => {
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
-}
+  
+  return (
+    <View style={styles.container}>
+      <Animated.Image
+        source={require('../assets//images/logo.png')}
+        style={[styles.logo, {opacity: fadeAnim}]}
+        resizeMode="contain"
+      />
+    </View>
+  );
+};
 
-return (
-  <View style={Styles.container}>
-    <Animated.Image
-      source={require('../assets/logo.png')}
-      style={[styles.logo, {opacity: fadeAnim}]}
-      resizeMode="contain"
-    />
-  </View>
-);
-
-const {width} = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {

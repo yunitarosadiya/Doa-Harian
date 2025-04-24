@@ -1,61 +1,47 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useCallback, useState } from 'react';
-import { Text, View, stylesheet } from 'react-native';
-
+import { useEffect, useState } from 'react';
+import { Text, View, StyleSheet } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
-
-SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMomo-Regular.ttf'),
-  });
 
-  const [showSplashText, setShowSplashText] = usestate(true);
+  const [showSplashText, setShowSplashText] = useState(true);
 
   useEffect(() => {
-    if (loaded) {
-      setTimeout(async () => {
-        await SplashScreen.hideAsync();
-        setShowSplashText(false);
-      }, 2000);
-    }
-  }, [loaded]);
+    SplashScreen.preventAutoHideAsync();
 
-  if (!loaded || showSplashText) {
-    return (
-      <View style={styles.splash}>
-        <Text style={styles.splashText}>Kumpulan Doa Harian</Text>
-      </View>
-    );
-  }
+    setTimeout(async () => {
+      await SplashScreen.hideAsync();
+      setShowSplashText(false);
+    }, 2000);
+  }, []);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
-        <stack.screen name="(tabs)" options={{ headerShown: false }} />
-        <stack.screen name="(index)" options={{ headerShown: false}} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
 
-const styles = stylesheet.create({
+const styles = StyleSheet.create({
   splash: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundcolor: '#ffffff'
+    backgroundColor: '#ffffff'
   },
   splashText: {
     fontSize: 26,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
+    fontFamily: 'System',
   },
 });
+
