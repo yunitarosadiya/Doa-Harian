@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Button, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 
-export default function HomeScreen() {
+export default function Index() {
   const [doa, setDoa] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -11,13 +11,19 @@ export default function HomeScreen() {
     const fetchDoa = async () => {
       try {
         const response = await fetch('https://open-api.my.id/api/doa');
-        const data = await response.json();
-        // Ambil 1 doa random
-        const randomDoa = data[Math.floor(Math.random() * data.length)];
-        setDoa(randomDoa);
+        const json = await response.json();
+        console.log('DATA API:', json);
+
+        if (json && json.length > 0) {
+          const randomIndex = Math.floor(Math.random() * json.length);
+          setDoa(json[randomIndex]);
+        } else {
+          console.log('Data kosong atau format tidak sesuai');
+        }
+
+        setLoading(false);
       } catch (error) {
-        console.error('Error fetching doa:', error);
-      } finally {
+        console.error('Gagal mengambil data doa:', error);
         setLoading(false);
       }
     };
@@ -26,32 +32,39 @@ export default function HomeScreen() {
   }, []);
 
   if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#4CAF50" />
-        <Text style={styles.loadingText}>Memuat doa harian...</Text>
-      </View>
-    );
+    return <ActivityIndicator size="large" color="#843c3c" style={{ marginTop: 50 }} />;
   }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Doa Hari Ini</Text>
+      <Text style={styles.header}>Hafalkan Doa Ini</Text>
 
-      <Text style={styles.label}>Judul:</Text>
-      <Text style={styles.value}>{doa.doa}</Text>
+      {doa ? (
+        <View style={styles.card}>
+          <Text style={styles.label}>Judul :</Text>
+          <Text style={styles.value}>{doa.judul}</Text>
 
-      <Text style={styles.label}>Arab:</Text>
-      <Text style={styles.arab}>{doa.ayat}</Text>
+          <Text style={styles.label}>Arab :</Text>
+          <Text style={styles.value}>{doa.arab}</Text>
 
-      <Text style={styles.label}>Latin:</Text>
-      <Text style={styles.value}>{doa.latin}</Text>
+          <Text style={styles.label}>Latin :</Text>
+          <Text style={styles.value}>{doa.latin}</Text>
 
-      <Text style={styles.label}>Arti:</Text>
-      <Text style={styles.value}>{doa.artinya}</Text>
+          <Text style={styles.label}>Terjemah :</Text>
+          <Text style={styles.value}>{doa.terjemah}</Text>
+        </View>
+      ) : (
+        <Text style={{ color: 'red', marginTop: 20 }}>Data tidak ditemukan</Text>
+      )}
 
       <View style={styles.buttonContainer}>
-        <Button title="Lihat Semua Doa" onPress={() => router.push('/tabs/all')} />
+        <TouchableOpacity style={styles.buttonDoa} onPress={() => router.push('/semua_doa')}>
+          <Text style={styles.buttonText}>SEMUA DOA</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.buttonMotivasi} onPress={() => router.push('/motivasi')}>
+          <Text style={styles.buttonText}>MOTIVASI</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -60,41 +73,69 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#843c3c',
     flexGrow: 1,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    paddingTop: 40,
   },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-  },
-  title: {
+
+  header: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
+    backgroundColor: '#5e2e2e',
+    color: '#fff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    overflow: 'hidden',
     textAlign: 'center',
   },
+
+  card: {
+    backgroundColor: '#a15d5d',
+    padding: 20,
+    borderRadius: 20,
+    width: '100%',
+    marginBottom: 30,
+  },
+
   label: {
-    fontSize: 16,
-    fontWeight: '600',
+    color: '#fff',
+    fontWeight: 'bold',
+    marginBottom: 5,
     marginTop: 10,
-  },
-  value: {
     fontSize: 16,
-    marginBottom: 10,
   },
-  arab: {
-    fontSize: 22,
-    marginBottom: 10,
-    textAlign: 'right',
-    fontFamily: 'sans-serif',
+
+  value: {
+    color: '#fff',
+    fontSize: 15,
   },
+
   buttonContainer: {
-    marginTop: 30,
+    width: '100%',
+    gap: 15,
+    marginBottom: 30,
+  },
+
+  buttonDoa: {
+    backgroundColor: '#5e2e2e',
+    paddingVertical: 15,
+    borderRadius: 20,
+    alignItems: 'center',
+  },
+
+  buttonMotivasi: {
+    backgroundColor: '#5e2e2e',
+    paddingVertical: 15,
+    borderRadius: 20,
+    alignItems: 'center',
+  },
+
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

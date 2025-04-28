@@ -1,5 +1,5 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState, useRef } from 'react';
@@ -22,7 +22,7 @@ export default function RootLayout() {
 
     setTimeout(async () => {
       await SplashScreen.hideAsync();
-      setShowSplashText(true);
+      setAppReady(true);
     }, 3000);
   }, []);
 
@@ -30,7 +30,7 @@ export default function RootLayout() {
     return (
       <View style={styles.splashContainer}>
         <Animated.Image
-          source={require('../../assets/images/logo.png')}
+          source={require('../assets/images/logo.png')}
           style={[styles.logo, { opacity: fadeAnim }]}
           resizeMode="contain"
         />
@@ -40,9 +40,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+      <Slot />
       <StatusBar style="auto" />
     </ThemeProvider>
   );
@@ -55,11 +53,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
+
   logo: {
     width: width * 0.95,
     height: height * 0.95,
   }
 });
-
